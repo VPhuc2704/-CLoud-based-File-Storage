@@ -1,0 +1,6 @@
+fe_cloudBasedFilePrj/
+*.env
+migrations/
+__pycache__/
+venv/
+!.gitkeep
