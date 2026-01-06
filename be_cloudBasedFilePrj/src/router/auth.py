@@ -20,7 +20,10 @@ def register(request, payload: RegisterRequest):
         password=payload.password,
         full_name=payload.full_name
     )
-    return 201, {"message": "Đăng ký thành công"}
+    return 201, {
+        "success": True,
+        "message": "Đăng ký thành công"
+    }
 
 
 @router.post("/login", response={200: LoginResponse})
@@ -65,4 +68,7 @@ def logout(request, payload: RefreshTokenRequest):
     refresh_token = payload.refresh_token
     auth_service.logout(refresh_token)
 
-    return 200, {"message": "Đăng xuất thành công"}
+    return 200, {
+        "success": True,
+        "message": "Đăng xuất thành công"
+    }

@@ -33,4 +33,5 @@ class LoginResponse(Schema):
     tokens: TokenResponse
 
 class MessageResponse(Schema):
+    success  : bool
     message: str
