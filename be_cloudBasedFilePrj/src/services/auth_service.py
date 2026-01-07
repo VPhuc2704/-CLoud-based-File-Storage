@@ -36,7 +36,7 @@ class AuthService():
     def find_by_token(self, token) -> Optional[RefreshToken]:
         return RefreshToken.objects.filter(token=token).first()
 
-
+    # Đăng kí 
     def register(self, user_name: str, email: str, password: str, full_name: str):
 
         hashed_pw = auth_utils.hash_password(password)
@@ -60,7 +60,7 @@ class AuthService():
 
         return self._build_login_result(account)
 
-     # Đăng nhập bằng OAuth 2.0
+    # Đăng nhập bằng OAuth 2.0
     # def login_with_google(self, token: str):
     #     google_id = None
     #     email = None

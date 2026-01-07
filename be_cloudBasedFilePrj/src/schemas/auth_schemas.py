@@ -1,12 +1,14 @@
 from ninja import Field, Schema
 from typing import Optional
+from pydantic import EmailStr
+from .types import StrongPassword, UserName, CleanName
 
 # Input Schemas
 class RegisterRequest(Schema):
-    user_name: str
-    full_name: str
-    email: str
-    password: str
+    user_name: UserName
+    full_name: CleanName
+    email: EmailStr
+    password: StrongPassword
 
 class LoginRequest(Schema):
     user_name: str
