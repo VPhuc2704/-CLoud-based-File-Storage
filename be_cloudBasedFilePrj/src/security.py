@@ -12,18 +12,26 @@ from src.exceptions import InvalidToken, ResourceNotFound, PermissionDenied
 class AuthBearer(HttpBearer):
     """
     Xác thực JWT token.
-    Ninja tự động tách 'Bearer <token>' và truyền vào hàm authenticate.
+    1. Ninja tự động tách 'Bearer <token>' và truyền vào hàm authenticate.
+    2. Cookie: access_token
     """
 
     def __call__(self, request):
+        token = None 
+        
         auth_header = request.headers.get("Authorization")
-        if not auth_header:
-            raise HttpError(401, "Authorization token required")
+
+        if auth_header:
+            if not auth_header.startswith("Bearer "):
+                raise HttpError(401, "Invalid Authorization header")
+            token = auth_header.replace("Bearer ", "", 1)
+
+        if not token:
+            token = request.COOKIES.get("access_token")
+
+        if not token: 
+            raise  HttpError(401, "Authentication token required")
         
-        if not auth_header.startswith("Bearer "):
-            raise HttpError(401, "Invalid Authorization header")
-        
-        token = auth_header.replace("Bearer ", "")
         return self.authenticate(request, token)
 
     def authenticate(self, request, token):

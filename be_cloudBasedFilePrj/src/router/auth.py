@@ -1,12 +1,14 @@
 from ninja import Router
 from ninja.responses import Response
-# Import schemas
+from ninja.errors import ValidationError
+
 from ..schemas.auth_schemas import (
-    RegisterRequest, LoginRequest, RefreshTokenRequest,
+    RegisterRequest, LoginRequest,
     LoginResponse, MessageResponse, TokenResponse
 )
 from ..services import auth_service
 from django.conf import settings
+
 
 router = Router(tags=["Auth"])
 auth_service = auth_service.AuthService()
@@ -33,42 +35,69 @@ def login(request, payload: LoginRequest):
         password=payload.password
     )
     
-    response_data = {
-        "user": {
-            "id": str(result["user"].id),
-            "email": result["user"].email,
-            "fullName": result["user"].full_name,
-            "userName": result["user"].user_name,
-            "avatarUrl": result["user"].avatar_url,
-            "isActive": result["user"].is_active
-        },
-        "tokens": {
-            "access_token": result["access_token"],
-            "refresh_token":  result["refresh_token"],
-            "token_type": "bearer"
+    response_data = Response(
+        {
+            "success": True,
+            "user": {
+                "id": str(result["user"].id),
+                "email": result["user"].email,
+                "fullName": result["user"].full_name,
+                "userName": result["user"].user_name,
+                "avatarUrl": result["user"].avatar_url,
+                "isActive": result["user"].is_active
+            },
+            "tokens": {
+                "token_type": "bearer",
+                "access_token": result["access_token"]
+            }
         }
-    }
+    )
+
+
+    response_data.set_cookie(
+        "refresh_token",
+        result["refresh_token"],
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        domain=None,
+        max_age=24 * 3600 * settings.REFRESH_EXP_DAYS,
+    )
+
     return response_data
 
 
 @router.post("/refresh", response={200: TokenResponse})
-def refresh(request, payload: RefreshTokenRequest):
-    refresh_token = payload.refresh_token
-    new_access_token = auth_service.refresh_token(refresh_token)
+def refresh(request):
+    refresh_token = request.COOKIES.get("refresh_token")
     
-    return {
-        "access_token": new_access_token,
-        "refresh_token": payload.refresh_token,
-        "token_type": "bearer"
-    }
+    if not refresh_token:
+        return 401, {"detail": "Không có refresh token"}
+
+    try:
+        new_access_token = auth_service.refresh_token(refresh_token)
+        return {
+            "token_type": "Bearer",
+            "access_token": new_access_token
+        }
+    except ValidationError as e:
+        return 401, {"detail": str(e)}
 
 
 @router.post("/logout", response={200: MessageResponse})
-def logout(request, payload: RefreshTokenRequest):
-    refresh_token = payload.refresh_token
-    auth_service.logout(refresh_token)
+def logout(request):
+    try:
+        refresh_token = request.COOKIES.get("refresh_token")
+        auth_service.logout(refresh_token)
 
-    return 200, {
-        "success": True,
-        "message": "Đăng xuất thành công"
-    }
+        response = Response(
+            {
+                "success": True,
+                "message": "Đăng xuất thành công"
+            }
+        )
+        response.delete_cookie("refresh_token")
+        return response
+
+    except Exception as e:
+        return 400, {"detail": str(e)}

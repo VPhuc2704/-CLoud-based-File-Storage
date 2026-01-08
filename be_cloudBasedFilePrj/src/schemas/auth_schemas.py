@@ -14,13 +14,9 @@ class LoginRequest(Schema):
     user_name: str
     password: str
 
-class RefreshTokenRequest(Schema):
-    refresh_token: str
-
 class TokenResponse(Schema):
+    token_type: str = "Bearer"
     access_token: str
-    refresh_token: str
-    token_type: str = "bearer"
 
 class UserInfoResponse(Schema):
     id: str
@@ -31,9 +27,10 @@ class UserInfoResponse(Schema):
     is_active: bool = Field(..., alias="isActive")
 
 class LoginResponse(Schema):
+    success: bool
     user: UserInfoResponse
     tokens: TokenResponse
 
 class MessageResponse(Schema):
-    success  : bool
+    success: bool
     message: str
