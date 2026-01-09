@@ -43,8 +43,20 @@ def generate_presigned_upload_url(storage_key: str, mime_type: str, expiration=3
         print(f"Error generating presigned URL: {e}")
         return None
     
+def generate_presigned_view_url(storage_key: str, expires=300) -> str:
+    """
+    Tạo URL view. Sống 5'.
+    """
+    return s3_client.generate_presigned_url(
+        "get_object",
+        Params={
+            "Bucket": BUCKET_NAME,
+            "Key": storage_key
+        },
+        ExpiresIn=expires,
+    )
 
-def generate_presigned_download_url(storage_key: str, expires=300) -> str:
+def generate_presigned_download_url(storage_key: str, file_name: str,expires=300) -> str:
     """
     Tạo URL download. Sống 5'.
     """
@@ -53,10 +65,11 @@ def generate_presigned_download_url(storage_key: str, expires=300) -> str:
         Params={
             "Bucket": BUCKET_NAME,
             "Key": storage_key,
+            "ResponseContentDisposition": f'attachment; filename="{file_name}"',
         },
         ExpiresIn=expires,
     )
 
 
-def delete_object(storage_key: str):
+def delete_object_from_storage(storage_key: str) -> None:
     s3_client.delete_object(Bucket=BUCKET_NAME, Key=storage_key)

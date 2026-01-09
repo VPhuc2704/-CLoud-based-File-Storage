@@ -18,6 +18,9 @@ class UploadInitOut(Schema):
     file_id: UUID
     upload_url: str
 
+class PresignedUrl(Schema):
+    presigned_url: str
+
 class FileOut(Schema):
     id: str
     file_name: str
@@ -25,4 +28,3 @@ class FileOut(Schema):
     mime_type: str
     created_at: datetime
     updated_at: datetime
-    download_url: Optional[str] = None

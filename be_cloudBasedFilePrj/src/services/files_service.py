@@ -10,7 +10,9 @@ from ..schemas.files_schemas import (
 from ..services.storage_service import (
     generate_storage_key,
     generate_presigned_upload_url,
+    generate_presigned_view_url,
     generate_presigned_download_url,
+    delete_object_from_storage
 )
 from ..models import Files, Status, Account
 
@@ -73,6 +75,31 @@ class FilesService():
         )
 
         return files
+    
+    @staticmethod
+    def view_file(*, owner: Account, file_id: str) -> str:
+        file = get_object_or_404(
+            Files,
+            owner=owner,
+            id=file_id,
+            is_deleted=False,
+            status=Status.SUCCESS,
+        )
+       
+        return generate_presigned_view_url(file.storage_key)
+
+    
+    @staticmethod
+    def download_file(*, owner: Account, file_id: str) -> str:
+        file = get_object_or_404(
+            Files,
+            owner=owner,
+            id=file_id,
+            is_deleted=False,
+            status=Status.SUCCESS,
+        )
+       
+        return generate_presigned_download_url(file.storage_key, file.file_name)
 
     @staticmethod
     def soft_delete_file(*, owner: Account, file_id: str) -> Files:
@@ -87,8 +114,42 @@ class FilesService():
             file.save(update_fields=["is_deleted"])
 
         return file
+    
+    
+    @staticmethod
+    def list_trashed_files(*, owner: Account) -> List[Files]:
+        files = Files.objects.filter(
+            owner=owner,
+            status=Status.SUCCESS,
+            is_deleted=True
+        )
+        return files
+
+    @staticmethod
+    def restore_temporary_file(*, owner: Account, file_id: str) -> Files:
+        with transaction.atomic():
+            file = Files.objects.select_for_update().get(
+                owner = owner,
+                id = file_id,
+                is_deleted=True,
+                status=Status.SUCCESS
+            )
+
+            file.is_deleted = False
+            file.save(update_fields=["is_deleted"])
         
+        return file
 
+    @staticmethod
+    def hard_delete_file(*, owner: Account, file_id: str) -> None:
+        with transaction.atomic():
+            file = Files.objects.select_for_update().get(
+                id=file_id,
+                owner=owner,
+                is_deleted=True,
+            )
 
+            delete_object_from_storage(file.storage_key)
 
+            file.delete()
 
