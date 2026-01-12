@@ -21,10 +21,12 @@ class UserService():
 
         return {
             "id": user.id,
+            "email": user.email,
             "full_name": user.full_name,
             "avatar_url": final_avatar_url, 
             "used_storage": user.used_storage,
             "storage_limit": user.storage_limit,
+            "created_at": user.created_at
         }
 
     @staticmethod
@@ -39,6 +41,10 @@ class UserService():
         user = Account.objects.select_for_update().get(id=owner.id)
 
         for attr, value in data.dict(exclude_unset=True).items():
+            if isinstance(value, str):
+                value = value.strip()
+                if not value: 
+                    continue
             setattr(user, attr, value)
 
         if avatar_file:
