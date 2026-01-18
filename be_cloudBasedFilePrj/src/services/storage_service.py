@@ -12,6 +12,7 @@ s3_client = boto3.client(
     config=Config(signature_version='s3v4')
 )
 
+
 BUCKET_NAME = settings.AWS_STORAGE_BUCKET_NAME
 
 
@@ -38,6 +39,8 @@ def generate_presigned_upload_url(storage_key: str, mime_type: str, expiration=3
             },
             ExpiresIn=expiration
         )
+
+        print(f"url: {url}")
         return url
     except Exception as e:
         print(f"Error generating presigned URL: {e}")
@@ -70,6 +73,9 @@ def generate_presigned_download_url(storage_key: str, file_name: str,expires=300
         ExpiresIn=expires,
     )
 
+
+sts = boto3.client("sts")
+print("DELETE USING:", sts.get_caller_identity())
 
 def delete_object_from_storage(storage_key: str) -> None:
     s3_client.delete_object(Bucket=BUCKET_NAME, Key=storage_key)

@@ -43,23 +43,23 @@ class AuthBearer(HttpBearer):
             )
 
             if payload.get("type") != "access_token":
-                raise InvalidToken(401, "Token không hợp lệ (Cần Access Token)")
+                raise InvalidToken("Token không hợp lệ (Cần Access Token)")
 
             user_id = payload.get("user_id")
             if not user_id:
-                raise InvalidToken(401, "Token payload bị lỗi")
+                raise InvalidToken("Token payload bị lỗi")
 
             try:
                 account = Account.objects.get(id=user_id)
             except Account.DoesNotExist:
-                raise ResourceNotFound(401, "Người dùng không tồn tại")
+                raise ResourceNotFound("Người dùng không tồn tại")
 
             request.user = account
             return account
 
         except ExpiredSignatureError:
-            raise InvalidToken(401, "Token has expired")
+            raise InvalidToken("Token has expired")
         except InvalidTokenError:
-            raise InvalidToken(401, "Invalid token")
+            raise InvalidToken("Invalid token")
         except Exception:
-            raise InvalidToken(401, "Authentication Failed")
+            raise InvalidToken("Authentication Failed")

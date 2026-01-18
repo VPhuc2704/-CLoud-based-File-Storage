@@ -2,7 +2,7 @@ from typing import Optional
 from ninja import Router, Form, File, UploadedFile
 from ..security import AuthBearer
 from ..services.user_service import UserService
-from ..schemas.user_schemas import ProfileResponse, ProfileUpdateIn
+from ..schemas.user_schemas import ProfileResponse, ProfileUpdateIn, MessageResponse, PasswordRequest
 from ..services.storage_service import generate_presigned_view_url
 
 router = Router(tags=["User"])
@@ -34,3 +34,15 @@ def update_user_profile(request, payload: ProfileUpdateIn = Form(...), avatar_fi
         "success": True,
         "data": result
     }
+
+@router.patch("/change-password", auth=AuthBearer(), response=MessageResponse)
+def change_password(request, payload: PasswordRequest):
+    UserService.replace_password(
+        owner=request.auth,
+        data=payload
+    )
+    
+    return MessageResponse(
+        success= True,
+        message= "Thay đổi mật khẩu thành công"
+    )

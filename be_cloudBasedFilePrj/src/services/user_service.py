@@ -5,9 +5,11 @@ import time
 from ninja import UploadedFile
 from django.db import transaction
 
-from ..models import Account
-from ..schemas.user_schemas import ProfileUpdateIn
-from ..exceptions import BaseAppException
+from ..models import Account, RefreshToken
+from ..schemas.user_schemas import PasswordRequest, ProfileUpdateIn
+from ..exceptions import BaseAppException, ResourceNotFound
+from ..utils.auth_utils import  verify_password, hash_password
+
 from .storage_service import save_file_to_storage, delete_object_from_storage, generate_presigned_view_url
 
 class UserService():
@@ -73,3 +75,45 @@ class UserService():
 
         return UserService.get_profile_data(user)
     
+    @staticmethod
+    def replace_password(*, owner: Account, data: PasswordRequest):
+        try:
+            user = Account.objects.get(id=owner.id)
+
+            # 1. Check mật khẩu cũ
+            if not verify_password(data.old_password, user.password):
+                raise BaseAppException(
+                    message="Mật khẩu cũ không đúng",
+                    code=400
+                )
+
+            # 2. Không cho trùng mật khẩu cũ
+            if verify_password(data.new_password, user.password):
+                raise BaseAppException(
+                    message="Mật khẩu mới không được trùng mật khẩu cũ",
+                    code=400
+                )
+
+            # 3. Update password + revoke refresh token
+            with transaction.atomic():
+                user.password = hash_password(data.new_password)
+                user.save(update_fields=["password"])
+
+                RefreshToken.objects.filter(
+                    account=user,
+                    revoked=False
+                ).update(revoked=True)
+            return
+
+        except Account.DoesNotExist:
+            raise ResourceNotFound(message="Không tìm thấy người dùng")
+
+        except BaseAppException:
+            raise
+
+        except Exception as e:
+            raise BaseAppException(
+                message="Lỗi hệ thống nội bộ",
+                code=500,
+                details=str(e)
+            )

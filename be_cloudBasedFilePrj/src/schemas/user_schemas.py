@@ -4,6 +4,7 @@ from typing import Optional
 from datetime import datetime
 
 from ..schemas.files_schemas import MessageResponse 
+from ..schemas.types import StrongPassword
 
 class ProfileOut(Schema):
     id: UUID
@@ -21,3 +22,7 @@ class ProfileUpdateIn(Schema):
 
 class ProfileResponse(MessageResponse):
     data: ProfileOut
+
+class PasswordRequest(Schema):
+    old_password: str
+    new_password: StrongPassword
