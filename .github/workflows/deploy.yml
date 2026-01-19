@@ -43,18 +43,19 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ubuntu
           key: ${{ secrets.VPS_KEY }}
+          # Script chạy trên VPS
           script: |
-            # Vào thư mục dự án
             cd cloudBasedFilePrj
 
-            # Pull code mới nhất (chủ yếu để lấy cập nhật nginx hoặc docker-compose)
-            git pull
+            # Lấy code cấu hình mới (docker-compose.yml, nginx...)
+            git pull origin releases
 
-            # Pull Docker Image mới nhất từ Hub về
+            # Kéo Image mới về
+            # (Nếu VPS cũ thì sửa thành docker-compose -f ...)
             docker compose -f docker-compose.prod.yml pull
 
-            # Khởi động lại container
-            docker compose -f docker-compose.prod.yml up -d
+            # Chạy lại container (Thêm --force-recreate để ép cập nhật)
+            docker compose -f docker-compose.prod.yml up -d --force-recreate
 
-            # Xóa các image cũ cho đỡ đầy ổ cứng
+            # Dọn dẹp rác
             docker image prune -f
