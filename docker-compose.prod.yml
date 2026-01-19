@@ -23,7 +23,7 @@ services:
     image: phucdev2704/cloud-frontend:latest
     restart: always
     environment:
-      - NEXT_PUBLIC_API_URL=/
+      - NEXT_PUBLIC_API_URL=https://cloud.vpone.site
 
   nginx:
     image: nginx:alpine
