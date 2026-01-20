@@ -93,7 +93,7 @@ export default function AboutPage() {
                   {m.name.charAt(0)}
                 </div>
                 <h3 className="font-semibold text-lg">{m.name}</h3>
-                <p className="text-sm text-white/70">Student ID: {m.id}</p>
+                <p className="text-sm text-white/70">MSSV: {m.id}</p>
               </motion.div>
             ))}
           </div>
