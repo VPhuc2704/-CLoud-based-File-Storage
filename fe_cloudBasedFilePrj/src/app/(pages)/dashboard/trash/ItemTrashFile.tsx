@@ -17,24 +17,28 @@ export const ItemTrashFile = (props: {
     <>
       <div
         key={fileTrash.id}
-        className="grid grid-cols-[2fr_1fr_1fr_1.5fr] items-center px-4 py-4 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl"
+        className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1.5fr] gap-2 md:gap-4 items-start md:items-center px-4 py-4 bg-white/10 backdrop-blur-xl border border-white/10 rounded-xl"
       >
         {/* Name */}
-        <div className="flex items-center gap-3">
-          <Trash2 size={18} className="text-red-400" />
-          {fileTrash.file_name}
+        <div className="flex items-center gap-3 min-w-0">
+          <Trash2 size={18} className="text-red-400 shrink-0" />
+          <span className="truncate">{fileTrash.file_name}</span>
         </div>
 
         {/* Type */}
-        <div>{getFileTypeLabel(fileTrash.mime_type)}</div>
+        <div className="text-white/80">
+          <span className="md:hidden text-white/40 mr-1">Loại:</span>
+          {getFileTypeLabel(fileTrash.mime_type)}
+        </div>
 
         {/* Deleted at */}
-        <div>
+        <div className="text-white/80">
+          <span className="md:hidden text-white/40 mr-1">Ngày xóa:</span>
           {moment(fileTrash.updated_at).locale('vi').format('DD/MM/YYYY')}
         </div>
 
         {/* Actions */}
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-2 md:justify-end">
           <RestoreButton
             api={`${process.env.NEXT_PUBLIC_API_URL}/api/file/restore/${fileTrash.id}`}
             id={fileTrash.id}

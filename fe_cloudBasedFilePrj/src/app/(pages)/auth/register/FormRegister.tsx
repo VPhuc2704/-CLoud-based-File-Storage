@@ -188,7 +188,7 @@ export const FormRegister = () => {
           whileTap={{ scale: 0.97 }}
           className="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-semibold shadow-lg"
         >
-          Create Account
+          Đăng ký
         </motion.button>
       </motion.form>
     </>

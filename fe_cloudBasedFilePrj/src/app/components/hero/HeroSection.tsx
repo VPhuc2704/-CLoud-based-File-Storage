@@ -20,22 +20,23 @@ export function HeroSection() {
         >
           <h1 className="text-5xl md:text-6xl font-extrabold text-white leading-tight">
             Cloud Based <br />
-            <span className="text-cyan-300">File Storage System</span>
+            <span className="text-cyan-300">Hệ thống lưu trữ tập tin</span>
           </h1>
 
           <p className="mt-6 text-lg text-white/80">
-            Upload, download and manage your files securely on the cloud.
+            Tải lên, tải xuống và quản lý tệp của bạn một cách an toàn trên đám
+            mây
             <br />
-            Designed as a cloud computing demo project.
+            Được thiết kế như một dự án minh họa về điện toán đám mây.
           </p>
 
           <div className="mt-10 flex justify-center gap-4">
             <button className="px-6 py-3 rounded-lg bg-cyan-400 text-black font-semibold">
-              Get Started
+              Bắt đầu ngay
             </button>
             <Link href={`/about`}>
               <button className="px-6 py-3 rounded-lg border border-white/30 text-white">
-                About
+                Về chúng tôi
               </button>
             </Link>
           </div>

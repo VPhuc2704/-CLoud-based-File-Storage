@@ -33,10 +33,10 @@ export default function LoginPage() {
           <FormLogin />
 
           <p className="text-center text-sm text-white/70 mt-6">
-            New here?{' '}
+            Chưa có tài khoản?{' '}
             <Link href="/auth/register">
               <span className="text-cyan-300 cursor-pointer">
-                Create account
+                Tạo tài khoản
               </span>
             </Link>
           </p>

@@ -22,7 +22,7 @@ export default function TrashPage() {
         <h1 className="text-3xl font-bold">Thùng rác</h1>
 
         {/* Header */}
-        <div className="grid grid-cols-[2fr_1fr_1fr_1.5fr] px-4 text-sm text-white/60">
+        <div className="hidden md:grid grid-cols-[2fr_1fr_1fr_1.5fr] px-4 text-sm text-white/60">
           <div>Tên file</div>
           <div>Loại</div>
           <div>Ngày xóa</div>

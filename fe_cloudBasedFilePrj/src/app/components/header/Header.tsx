@@ -18,9 +18,9 @@ export default function Header() {
 
         {/* NAV */}
         <nav className="hidden md:flex gap-8 text-white/80">
-          <a className="hover:text-cyan-300 transition">Features</a>
-          <a className="hover:text-cyan-300 transition">Security</a>
-          <a className="hover:text-cyan-300 transition">Docs</a>
+          <a className="hover:text-cyan-300 transition">Chức năng</a>
+          <a className="hover:text-cyan-300 transition">Bảo mật</a>
+          <a className="hover:text-cyan-300 transition">Tài liệu</a>
         </nav>
 
         {/* ACTION BUTTONS */}
@@ -31,7 +31,7 @@ export default function Header() {
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/30 text-white hover:bg-white/10 transition"
           >
             <LogIn size={18} />
-            Login
+            Đăng nhập
           </Link>
 
           {/* Register */}
@@ -40,7 +40,7 @@ export default function Header() {
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-500 text-black font-semibold shadow-lg hover:opacity-90 transition"
           >
             <UserPlus size={18} />
-            Sign up
+            Đăng ký
           </Link>
         </div>
       </div>

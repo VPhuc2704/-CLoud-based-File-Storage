@@ -55,9 +55,9 @@ export default function RegisterPage() {
             variants={item}
             className="text-center text-sm text-white/70 mt-6"
           >
-            Already have an account?{' '}
+            Bạn đã có tài khoản?{' '}
             <Link href="/auth/login">
-              <span className="text-cyan-300 cursor-pointer">Sign in</span>
+              <span className="text-cyan-300 cursor-pointer">Đăng nhập</span>
             </Link>
           </motion.p>
         </motion.div>
